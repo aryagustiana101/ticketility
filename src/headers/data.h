@@ -6,17 +6,11 @@
 
 using namespace std;
 
-enum UserType
-{
-  ADMIN,
-  REGULAR
-};
-
 struct User
 {
   string username;
   string password;
-  UserType type;
+  string role;
 };
 
 #endif
