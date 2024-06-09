@@ -9,15 +9,15 @@ using namespace std;
 struct User
 {
   string username;
-  string password;
   string role;
+  string password;
 };
 
 struct TicketDetail
 {
-  int price;
   string code;
   string name;
+  int price;
 };
 
 struct Ticket
@@ -26,6 +26,15 @@ struct Ticket
   Ticket *left;
   Ticket *right;
   TicketDetail detail;
+};
+
+struct Order
+{
+  string code;
+  string status;
+  int amount;
+  string user;
+  TicketDetail ticketDetail;
 };
 
 #endif

@@ -37,7 +37,7 @@ void userMenu(const Ticket *ticket)
     case 1:
     {
       cout << "\n";
-      inOrderTraversal(ticket);
+      preOrderTraversal(ticket);
       break;
     }
     case 2:

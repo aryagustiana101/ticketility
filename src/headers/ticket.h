@@ -5,6 +5,7 @@
 
 Ticket *generateTicket();
 void inOrderTraversal(const Ticket *node);
+void preOrderTraversal(const Ticket *node);
 bool findTicketByCode(const Ticket *node, const string &code);
 
 #endif

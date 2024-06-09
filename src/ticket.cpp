@@ -19,22 +19,8 @@ Ticket *makeTicket(const TicketDetail &detail)
 string randomName()
 {
   vector<string> names = {"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"};
+
   return names[rand() % names.size()];
-}
-
-string randomCode(vector<string> &usedCodes)
-{
-  string code;
-  vector<string> codes = {"TX", "AU", "LAX", "BTC", "REZ"};
-
-  do
-  {
-    code = codes[rand() % codes.size()];
-  } while (find(usedCodes.begin(), usedCodes.end(), code) != usedCodes.end());
-
-  usedCodes.push_back(code);
-
-  return code;
 }
 
 void randomizeTickets(Ticket *root, int depth, int maxDepth)
@@ -44,38 +30,79 @@ void randomizeTickets(Ticket *root, int depth, int maxDepth)
     return;
   }
 
-  root->left = makeTicket({rand() % 501 + 100, generateCode(3), randomName()});
+  root->left = makeTicket({
+      generateCode(3),
+      randomName(),
+      rand() % 501 + 100,
+  });
+
   randomizeTickets(root->left, depth + 1, maxDepth);
 
-  root->right = makeTicket({rand() % 501 + 100, generateCode(3), randomName()});
+  root->right = makeTicket({
+      generateCode(3),
+      randomName(),
+      rand() % 501 + 100,
+  });
+
   randomizeTickets(root->right, depth + 1, maxDepth);
 }
 
 Ticket *generateTicket()
 {
-  Ticket *root = makeTicket({0, "", ""});
+  Ticket *root = makeTicket({
+      "",
+      "",
+      0,
+  });
 
   randomizeTickets(root, 0, 2);
 
   return root;
 }
 
+void displayTicketDetail(TicketDetail detail)
+{
+  cout << "Code: " << detail.code << "\n";
+  cout << "Name: " << detail.name << "\n";
+  cout << "Price: " << detail.price << "\n";
+  cout << "\n";
+}
+
 void inOrderTraversal(const Ticket *node)
 {
   if (node == nullptr)
+  {
     return;
+  }
 
   inOrderTraversal(node->left);
 
+  displayTicketDetail(node->detail);
+
   if (node->detail.code != "")
   {
-    cout << "Code: " << node->detail.code << endl;
-    cout << "Name: " << node->detail.name << endl;
-    cout << "Price: " << node->detail.price << endl;
-    cout << endl;
+    displayTicketDetail(node->detail);
   }
 
   inOrderTraversal(node->right);
+}
+
+void preOrderTraversal(const Ticket *node)
+{
+  if (node == nullptr)
+  {
+    return;
+  }
+
+  displayTicketDetail(node->detail);
+
+  if (node->detail.code != "")
+  {
+    displayTicketDetail(node->detail);
+  }
+
+  preOrderTraversal(node->left);
+  preOrderTraversal(node->right);
 }
 
 bool findTicketByCode(const Ticket *node, const string &code)

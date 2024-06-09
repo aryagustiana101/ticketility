@@ -51,11 +51,7 @@ void registerUser()
     }
   }
 
-  User user;
-  user.username = username;
-  user.password = password;
-  user.role = "user";
-  users.push_back(user);
+  users.push_back({username, password, "user"});
 
   saveUsers(users);
 

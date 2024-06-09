@@ -1,16 +1,16 @@
-#include <iostream>
+#include <ctime>
 #include <string>
 #include <cstdlib>
-#include <ctime>
 #include <sstream>
+#include <iostream>
 #include "headers/data.h"
 
 using namespace std;
 
 string generateCode(int length)
 {
-  const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   string result;
+  const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   for (int i = 0; i < length; ++i)
   {

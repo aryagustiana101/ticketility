@@ -6,22 +6,20 @@
 using namespace std;
 using json = nlohmann::json;
 
-const string USERS_FILENAME = "users.json";
+const string STORAGE_FILENAME = "users.json";
 
 vector<User> getUsers()
 {
   vector<User> users;
 
-  json data = readStorage(USERS_FILENAME);
+  json data = readStorage(STORAGE_FILENAME);
 
   bool rootExists = false;
 
   for (const auto &item : data)
   {
-    User user;
-    user.username = item["username"];
-    user.password = item["password"];
-    user.role = item["role"];
+    User user = {item["username"], item["password"], item["role"]};
+
     users.push_back(user);
 
     if (user.username == "root")
@@ -32,11 +30,7 @@ vector<User> getUsers()
 
   if (!rootExists)
   {
-    User user;
-    user.username = "root";
-    user.password = "123";
-    user.role = "admin";
-    users.push_back(user);
+    users.push_back({"root", "123", "admin"});
   }
 
   return users;
@@ -66,5 +60,5 @@ void saveUsers(const vector<User> &users)
                     {"role", "admin"}});
   }
 
-  writeStorage(USERS_FILENAME, data);
+  writeStorage(STORAGE_FILENAME, data);
 }
