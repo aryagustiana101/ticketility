@@ -13,4 +13,19 @@ struct User
   string role;
 };
 
+struct TicketDetail
+{
+  int price;
+  string code;
+  string name;
+};
+
+struct Ticket
+{
+  Ticket *parent;
+  Ticket *left;
+  Ticket *right;
+  TicketDetail detail;
+};
+
 #endif
