@@ -33,8 +33,9 @@ struct Order
   string code;
   string status;
   int amount;
+  string date;
   string user;
-  TicketDetail ticketDetail;
+  TicketDetail ticket;
 };
 
 #endif

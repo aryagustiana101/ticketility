@@ -2,6 +2,7 @@
 #include <iostream>
 #include "headers/menu.h"
 #include "headers/data.h"
+#include "headers/utils.h"
 #include "headers/ticket.h"
 #include "headers/banner.h"
 

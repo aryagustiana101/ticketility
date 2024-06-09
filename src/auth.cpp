@@ -51,7 +51,7 @@ void registerUser()
     }
   }
 
-  users.push_back({username, password, "user"});
+  users.push_back({username, "user", password});
 
   saveUsers(users);
 

@@ -2,13 +2,95 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include "headers/data.h"
 #include "headers/auth.h"
+#include "headers/order.h"
 #include "headers/ticket.h"
 
 using namespace std;
 
-void userMenu(const Ticket *ticket)
+void adminMenu(User *user, const Ticket *ticketTree)
+{
+  int choice;
+
+  do
+  {
+    string _choice;
+
+    cout << "\nAdmin Menu:\n";
+    cout << "1. Display Available Tickets\n";
+    cout << "2. Display Pending Orders\n";
+    cout << "3. Display All Orders\n";
+    cout << "4. Process Pending Order\n";
+    cout << "5. Logout\n";
+    cout << "\nEnter your choice: ";
+    getline(cin, _choice);
+
+    stringstream ss(_choice);
+
+    if (!(ss >> choice))
+    {
+      cout << "\nInvalid input. Please enter a number.\n";
+      continue;
+    }
+
+    switch (choice)
+    {
+    case 1:
+    {
+      cout << "\nAvailable Tickets: \n\n";
+      inOrderTraversal(ticketTree);
+      break;
+    }
+    case 2:
+    {
+      vector<Order> orders = getPendingOrders();
+
+      cout << "\nPending Orders: \n";
+
+      if (orders.size() == 0)
+      {
+        cout << "Order not found.\n";
+      }
+      else
+      {
+        cout << "\n";
+        displayOrders(orders);
+      }
+
+      break;
+    }
+    case 3:
+    {
+      vector<Order> orders = getOrders();
+
+      cout << "\nAll Orders: \n";
+
+      if (orders.size() == 0)
+      {
+        cout << "Order not found.\n";
+      }
+      else
+      {
+        cout << "\n";
+        displayOrders(orders);
+      }
+
+      break;
+    }
+    case 4:
+      break;
+    case 5:
+      cout << "\nLogout successful.\n";
+      break;
+    default:
+      cout << "\nInvalid choice. Please enter a number from 1 to 5.\n";
+    }
+  } while (choice != 5);
+}
+
+void userMenu(User *user, const Ticket *ticketTree)
 {
   int choice;
 
@@ -17,9 +99,9 @@ void userMenu(const Ticket *ticket)
     string _choice;
 
     cout << "\nUser Menu:\n";
-    cout << "1. Display Available Ticket\n";
-    cout << "2. Check Order\n";
-    cout << "3. Create New Order\n";
+    cout << "1. Display Available Tickets\n";
+    cout << "2. Display My Orders\n";
+    cout << "3. Create Order\n";
     cout << "4. Logout\n";
     cout << "\nEnter your choice: ";
     getline(cin, _choice);
@@ -36,13 +118,34 @@ void userMenu(const Ticket *ticket)
     {
     case 1:
     {
-      cout << "\n";
-      preOrderTraversal(ticket);
+      cout << "\nAvailable Tickets: \n\n";
+      preOrderTraversal(ticketTree);
       break;
     }
     case 2:
+    {
+      vector<Order> userOrders;
+      vector<Order> orders = getOrders();
+
+      copy_if(orders.begin(), orders.end(), back_inserter(userOrders), [&](const Order &order)
+              { return order.user == user->username; });
+
+      cout << "\nYour Orders: \n";
+
+      if (orders.size() == 0)
+      {
+        cout << "Order not found.\n";
+      }
+      else
+      {
+        cout << "\n";
+        displayOrders(userOrders);
+      }
+
       break;
+    }
     case 3:
+      createOrder(user, ticketTree);
       break;
     case 4:
       cout << "\nLogout successful.\n";
@@ -53,7 +156,7 @@ void userMenu(const Ticket *ticket)
   } while (choice != 4);
 }
 
-void authMenu(const Ticket *ticket)
+void authMenu(const Ticket *ticketTree)
 {
   int choice;
 
@@ -82,12 +185,14 @@ void authMenu(const Ticket *ticket)
     {
       User *user = login();
 
-      if (user != nullptr)
+      if (user != nullptr && user->role == "user")
       {
-        if (user->role == "user")
-        {
-          userMenu(ticket);
-        }
+        userMenu(user, ticketTree);
+      }
+
+      if (user != nullptr && user->role == "admin")
+      {
+        adminMenu(user, ticketTree);
       }
 
       break;

@@ -6,5 +6,7 @@
 using namespace std;
 
 string generateCode(int length);
+string randomItem(vector<string> items);
+string getCurrentDateTime();
 
 #endif

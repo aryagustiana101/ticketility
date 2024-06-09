@@ -16,13 +16,6 @@ Ticket *makeTicket(const TicketDetail &detail)
   return ticket;
 }
 
-string randomName()
-{
-  vector<string> names = {"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"};
-
-  return names[rand() % names.size()];
-}
-
 void randomizeTickets(Ticket *root, int depth, int maxDepth)
 {
   if (depth >= maxDepth)
@@ -32,7 +25,7 @@ void randomizeTickets(Ticket *root, int depth, int maxDepth)
 
   root->left = makeTicket({
       generateCode(3),
-      randomName(),
+      randomItem({"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"}),
       rand() % 501 + 100,
   });
 
@@ -40,7 +33,7 @@ void randomizeTickets(Ticket *root, int depth, int maxDepth)
 
   root->right = makeTicket({
       generateCode(3),
-      randomName(),
+      randomItem({"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"}),
       rand() % 501 + 100,
   });
 
@@ -65,7 +58,7 @@ void displayTicketDetail(TicketDetail detail)
   cout << "Code: " << detail.code << "\n";
   cout << "Name: " << detail.name << "\n";
   cout << "Price: " << detail.price << "\n";
-  cout << "\n";
+  cout << "------------------\n\n";
 }
 
 void inOrderTraversal(const Ticket *node)
@@ -76,8 +69,6 @@ void inOrderTraversal(const Ticket *node)
   }
 
   inOrderTraversal(node->left);
-
-  displayTicketDetail(node->detail);
 
   if (node->detail.code != "")
   {
@@ -94,8 +85,6 @@ void preOrderTraversal(const Ticket *node)
     return;
   }
 
-  displayTicketDetail(node->detail);
-
   if (node->detail.code != "")
   {
     displayTicketDetail(node->detail);
@@ -105,22 +94,29 @@ void preOrderTraversal(const Ticket *node)
   preOrderTraversal(node->right);
 }
 
-bool findTicketByCode(const Ticket *node, const string &code)
+TicketDetail *findTicketDetailByCode(const Ticket *node, const string &code)
 {
   if (node == nullptr)
   {
-    return false;
+    return nullptr;
   }
 
   if (node->detail.code == code)
   {
-    return true;
+    return new TicketDetail(node->detail);
   }
 
-  if (findTicketByCode(node->left, code) || findTicketByCode(node->right, code))
+  TicketDetail *leftResult = findTicketDetailByCode(node->left, code);
+  if (leftResult != nullptr)
   {
-    return true;
+    return leftResult;
   }
 
-  return false;
+  TicketDetail *rightResult = findTicketDetailByCode(node->right, code);
+  if (rightResult != nullptr)
+  {
+    return rightResult;
+  }
+
+  return nullptr;
 }

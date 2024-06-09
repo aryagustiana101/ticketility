@@ -18,7 +18,7 @@ vector<User> getUsers()
 
   for (const auto &item : data)
   {
-    User user = {item["username"], item["password"], item["role"]};
+    User user = {item["username"], item["role"], item["password"]};
 
     users.push_back(user);
 
@@ -30,7 +30,11 @@ vector<User> getUsers()
 
   if (!rootExists)
   {
-    users.push_back({"root", "123", "admin"});
+    users.push_back({
+        "root",
+        "admin",
+        "123",
+    });
   }
 
   return users;
