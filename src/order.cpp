@@ -12,7 +12,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-const size_t MAX_QUEUE_SIZE = 5;
+const size_t MAX_QUEUE_SIZE = 3;
 const string STORAGE_FILENAME = "orders.json";
 
 vector<Order> getOrders()
@@ -63,22 +63,22 @@ vector<Order> getPendingOrders()
 
 queue<Order> getOrderQueue()
 {
-  queue<Order> line;
+  queue<Order> orderQueue;
   vector<Order> orders = getPendingOrders();
 
   for (const auto &order : orders)
   {
-    line.push(order);
+    orderQueue.push(order);
   }
 
-  return line;
+  return orderQueue;
 }
 
 bool addOrderQueue(Order order)
 {
-  queue<Order> line = getOrderQueue();
+  queue<Order> orderQueue = getOrderQueue();
 
-  if (line.size() < MAX_QUEUE_SIZE)
+  if (orderQueue.size() < MAX_QUEUE_SIZE)
   {
     vector<Order> orders = getOrders();
 
@@ -87,14 +87,14 @@ bool addOrderQueue(Order order)
     saveOrders(orders);
   }
 
-  return line.size() < MAX_QUEUE_SIZE;
+  return orderQueue.size() < MAX_QUEUE_SIZE;
 }
 
 void createOrder(User *user, const Ticket *ticketTree)
 {
   string ticketCode;
 
-  cout << "\nEnter the code of the ticket: ";
+  cout << "\nEnter the ticket code: ";
   getline(cin, ticketCode);
 
   TicketDetail *ticket = findTicketDetailByCode(ticketTree, ticketCode);
@@ -127,22 +127,84 @@ void createOrder(User *user, const Ticket *ticketTree)
        user->username,
        {ticket->code, ticket->name, ticket->price}});
 
-  cout << (result ? "Order successfully added to the queue." : "Order queue is full, please try again in a few moment.") << "\n";
+  cout << (result ? "\nOrder successfully added to the queue." : "\nOrder queue is full, please try again in a few moment.") << "\n";
+}
+
+void displayOrder(Order order)
+{
+  cout << "Order Code: " << order.code << "\n";
+  cout << "Order Status: " << order.status << "\n";
+  cout << "Order Amount: " << order.amount << "\n";
+  cout << "Order Date: " << order.date << "\n";
+  cout << "Order Total: " << order.ticket.price * order.amount << "\n";
+  cout << "User: " << order.user << "\n";
+  cout << "Ticket Code: " << order.ticket.code << "\n";
+  cout << "Ticket Name: " << order.ticket.name << "\n";
+  cout << "Ticket Price: " << order.ticket.price << "\n";
+  cout << "------------------\n\n";
 }
 
 void displayOrders(vector<Order> orders)
 {
   for (const auto &order : orders)
   {
-    cout << "Order Code: " << order.code << "\n";
-    cout << "Order Status: " << order.status << "\n";
-    cout << "Order Amount: " << order.amount << "\n";
-    cout << "Order Date: " << order.date << "\n";
-    cout << "Order Total: " << order.ticket.price * order.amount << "\n";
-    cout << "User: " << order.user << "\n";
-    cout << "Ticket Code: " << order.ticket.code << "\n";
-    cout << "Ticket Name: " << order.ticket.name << "\n";
-    cout << "Ticket Price: " << order.ticket.price << "\n";
-    cout << "------------------\n\n";
+    displayOrder(order);
   }
+}
+
+bool findOrderByCode(string code)
+{
+  vector<Order> orders = getOrders();
+
+  for (const auto &order : orders)
+  {
+    if (order.code == code)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void processPendingOrder()
+{
+  queue<Order> orderQueue = getOrderQueue();
+
+  if (orderQueue.empty())
+  {
+    cout << "\nOrder queue is empty.\n";
+    return;
+  }
+
+  string orderCode;
+  vector<Order> orders = getOrders();
+
+  cout << "\nEnter the order code: ";
+  getline(cin, orderCode);
+
+  if (!findOrderByCode(orderCode))
+  {
+    cout << "\nOrder with code " << orderCode << " not found.\n";
+    return;
+  }
+
+  for (auto &order : orders)
+  {
+    if (order.code == orderCode)
+    {
+      if (order.status == "pending")
+      {
+        order.status = "processed";
+        cout << "\nOrder with code " << orderCode << " has been processed.\n";
+      }
+      else
+      {
+        cout << "\nOrder with code " << orderCode << " is not pending.\n";
+        return;
+      }
+    }
+  }
+
+  saveOrders(orders);
 }

@@ -20,7 +20,7 @@ void adminMenu(User *user, const Ticket *ticketTree)
 
     cout << "\nAdmin Menu:\n";
     cout << "1. Display Available Tickets\n";
-    cout << "2. Display Pending Orders\n";
+    cout << "2. Display Order Queue\n";
     cout << "3. Display All Orders\n";
     cout << "4. Process Pending Order\n";
     cout << "5. Logout\n";
@@ -45,18 +45,20 @@ void adminMenu(User *user, const Ticket *ticketTree)
     }
     case 2:
     {
-      vector<Order> orders = getPendingOrders();
+      auto orderQueue = getOrderQueue();
+
+      if (orderQueue.empty())
+      {
+        cout << "\nOrder queue is empty.\n";
+      }
 
       cout << "\nPending Orders: \n";
 
-      if (orders.size() == 0)
+      while (!orderQueue.empty())
       {
-        cout << "Order not found.\n";
-      }
-      else
-      {
-        cout << "\n";
-        displayOrders(orders);
+        Order order = orderQueue.front();
+        displayOrder(order);
+        orderQueue.pop();
       }
 
       break;
@@ -80,6 +82,7 @@ void adminMenu(User *user, const Ticket *ticketTree)
       break;
     }
     case 4:
+      processPendingOrder();
       break;
     case 5:
       cout << "\nLogout successful.\n";
