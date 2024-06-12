@@ -11,6 +11,10 @@
 #include <termios.h>
 #include "headers/data.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using namespace std;
 
 string generateCode(int length)
@@ -104,4 +108,13 @@ string inputPassword()
   cout << endl;
 
   return password;
+}
+
+void clearScreen()
+{
+#ifdef _WIN32
+  system("cls");
+#else
+  cout << "\033[2J\033[1;1H";
+#endif
 }

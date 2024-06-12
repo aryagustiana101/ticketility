@@ -10,5 +10,6 @@ string randomItem(vector<string> items);
 string getCurrentDateTime();
 void setStdinEcho(bool enable);
 string inputPassword();
+void clearScreen();
 
 #endif
