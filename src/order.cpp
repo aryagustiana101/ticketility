@@ -8,6 +8,7 @@
 #include "headers/ticket.h"
 #include "headers/storage.h"
 #include "nlohmann/json.hpp"
+#include "headers/text-table.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -130,26 +131,37 @@ void createOrder(User *user, const Ticket *ticketTree)
   cout << (result ? "\nOrder successfully added to the queue." : "\nOrder queue is full, please try again in a few moment.") << "\n";
 }
 
-void displayOrder(Order order)
-{
-  cout << "Order Code: " << order.code << "\n";
-  cout << "Order Status: " << order.status << "\n";
-  cout << "Order Amount: " << order.amount << "\n";
-  cout << "Order Date: " << order.date << "\n";
-  cout << "Order Total: " << order.ticket.price * order.amount << "\n";
-  cout << "User: " << order.user << "\n";
-  cout << "Ticket Code: " << order.ticket.code << "\n";
-  cout << "Ticket Name: " << order.ticket.name << "\n";
-  cout << "Ticket Price: " << order.ticket.price << "\n";
-  cout << "------------------\n\n";
-}
-
 void displayOrders(vector<Order> orders)
 {
+  TextTable t('-', '|', '+');
+
+  t.add("Order Code");
+  t.add("Order Status");
+  t.add("Order Amount");
+  t.add("Order Date");
+  t.add("Order Total");
+  t.add("User");
+  t.add("Ticket Code");
+  t.add("Ticket Name");
+  t.add("Ticket Price");
+  t.endOfRow();
+
   for (const auto &order : orders)
   {
-    displayOrder(order);
+    t.add(order.code);
+    t.add(order.status);
+    t.add(to_string(order.amount));
+    t.add(order.date);
+    t.add(to_string((order.ticket.price * order.amount)));
+    t.add(order.user);
+    t.add(order.ticket.code);
+    t.add(order.ticket.name);
+    t.add(to_string(order.ticket.price));
+    t.endOfRow();
   }
+
+  t.setAlignment(2, TextTable::Alignment::RIGHT);
+  cout << t;
 }
 
 bool findOrderByCode(string code)

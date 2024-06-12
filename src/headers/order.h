@@ -11,7 +11,6 @@ vector<Order> getPendingOrders();
 queue<Order> getOrderQueue();
 bool addOrderQueue(Order order);
 void createOrder(User *user, const Ticket *ticketTree);
-void displayOrder(Order order);
 void displayOrders(vector<Order> orders);
 bool findOrderByCode(string code);
 void processPendingOrder();

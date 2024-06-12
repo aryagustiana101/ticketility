@@ -1,8 +1,10 @@
+#include <vector>
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include "headers/data.h"
 #include "headers/utils.h"
+#include "headers/text-table.h"
 
 using namespace std;
 
@@ -53,32 +55,24 @@ Ticket *generateTicket()
   return root;
 }
 
-void displayTicketDetail(TicketDetail detail)
-{
-  cout << "Code: " << detail.code << "\n";
-  cout << "Name: " << detail.name << "\n";
-  cout << "Price: " << detail.price << "\n";
-  cout << "------------------\n\n";
-}
-
-void inOrderTraversal(const Ticket *node)
+void inOrderTraversal(const Ticket *node, vector<TicketDetail> &ticketDetails)
 {
   if (node == nullptr)
   {
     return;
   }
 
-  inOrderTraversal(node->left);
+  inOrderTraversal(node->left, ticketDetails);
 
   if (node->detail.code != "")
   {
-    displayTicketDetail(node->detail);
+    ticketDetails.push_back(node->detail);
   }
 
-  inOrderTraversal(node->right);
+  inOrderTraversal(node->right, ticketDetails);
 }
 
-void preOrderTraversal(const Ticket *node)
+void preOrderTraversal(const Ticket *node, vector<TicketDetail> &ticketDetails)
 {
   if (node == nullptr)
   {
@@ -87,11 +81,11 @@ void preOrderTraversal(const Ticket *node)
 
   if (node->detail.code != "")
   {
-    displayTicketDetail(node->detail);
+    ticketDetails.push_back(node->detail);
   }
 
-  preOrderTraversal(node->left);
-  preOrderTraversal(node->right);
+  preOrderTraversal(node->left, ticketDetails);
+  preOrderTraversal(node->right, ticketDetails);
 }
 
 TicketDetail *findTicketDetailByCode(const Ticket *node, const string &code)
@@ -119,4 +113,25 @@ TicketDetail *findTicketDetailByCode(const Ticket *node, const string &code)
   }
 
   return nullptr;
+}
+
+void displayTicketDetails(vector<TicketDetail> ticketDetails)
+{
+  TextTable t('-', '|', '+');
+
+  t.add("Code");
+  t.add("Name");
+  t.add("Price");
+  t.endOfRow();
+
+  for (const auto &ticketDetail : ticketDetails)
+  {
+    t.add(ticketDetail.code);
+    t.add(ticketDetail.name);
+    t.add(to_string(ticketDetail.price));
+    t.endOfRow();
+  }
+
+  t.setAlignment(2, TextTable::Alignment::RIGHT);
+  cout << t;
 }

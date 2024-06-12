@@ -6,7 +6,9 @@
 #include "headers/data.h"
 #include "headers/auth.h"
 #include "headers/order.h"
+#include "headers/utils.h"
 #include "headers/ticket.h"
+#include "headers/text-table.h"
 
 using namespace std;
 
@@ -39,32 +41,50 @@ void adminMenu(User *user, const Ticket *ticketTree)
     {
     case 1:
     {
+      clearScreen();
+
+      vector<TicketDetail> ticketDetails;
+      inOrderTraversal(ticketTree, ticketDetails);
+
       cout << "\nAvailable Tickets: \n\n";
-      inOrderTraversal(ticketTree);
+
+      displayTicketDetails(ticketDetails);
+
       break;
     }
     case 2:
     {
+      clearScreen();
+
+      vector<Order> orders;
       auto orderQueue = getOrderQueue();
+
+      cout << "\nPending Orders: \n";
 
       if (orderQueue.empty())
       {
-        cout << "\nOrder queue is empty.\n";
+        cout << "Order queue is empty.\n";
+        break;
       }
-
-      cout << "\nPending Orders: \n";
 
       while (!orderQueue.empty())
       {
         Order order = orderQueue.front();
-        displayOrder(order);
+
+        orders.push_back(order);
+
         orderQueue.pop();
       }
+
+      cout << "\n";
+      displayOrders(orders);
 
       break;
     }
     case 3:
     {
+      clearScreen();
+
       vector<Order> orders = getOrders();
 
       cout << "\nAll Orders: \n";
@@ -82,11 +102,17 @@ void adminMenu(User *user, const Ticket *ticketTree)
       break;
     }
     case 4:
+    {
+      clearScreen();
       processPendingOrder();
       break;
+    }
     case 5:
+    {
+      clearScreen();
       cout << "\nLogout successful.\n";
       break;
+    }
     default:
       cout << "\nInvalid choice. Please enter a number from 1 to 5.\n";
     }
@@ -121,12 +147,22 @@ void userMenu(User *user, const Ticket *ticketTree)
     {
     case 1:
     {
+      clearScreen();
+
+      TextTable t('-', '|', '+');
+      vector<TicketDetail> ticketDetails;
+      preOrderTraversal(ticketTree, ticketDetails);
+
       cout << "\nAvailable Tickets: \n\n";
-      preOrderTraversal(ticketTree);
+
+      displayTicketDetails(ticketDetails);
+
       break;
     }
     case 2:
     {
+      clearScreen();
+
       vector<Order> userOrders;
       vector<Order> orders = getOrders();
 
@@ -148,11 +184,17 @@ void userMenu(User *user, const Ticket *ticketTree)
       break;
     }
     case 3:
+    {
+      clearScreen();
       createOrder(user, ticketTree);
       break;
+    }
     case 4:
+    {
+      clearScreen();
       cout << "\nLogout successful.\n";
       break;
+    }
     default:
       cout << "\nInvalid choice. Please enter a number from 1 to 4.\n";
     }
@@ -186,6 +228,8 @@ void authMenu(const Ticket *ticketTree)
     {
     case 1:
     {
+      clearScreen();
+
       User *user = login();
 
       if (user != nullptr && user->role == "user")
@@ -201,11 +245,17 @@ void authMenu(const Ticket *ticketTree)
       break;
     }
     case 2:
+    {
+      clearScreen();
       registerUser();
       break;
+    }
     case 3:
+    {
+      clearScreen();
       cout << "\nExiting Ticketility. Goodbye!\n\n";
       break;
+    }
     default:
       cout << "\nInvalid choice. Please enter a number from 1 to 3.\n";
     }
