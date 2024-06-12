@@ -91,9 +91,13 @@ bool addOrderQueue(Order order)
   return orderQueue.size() < MAX_QUEUE_SIZE;
 }
 
-void createOrder(User *user, const Ticket *ticketTree)
+void createOrder(User *user, Ticket *ticketTree)
 {
   string ticketCode;
+
+  cout << "\n";
+  auto ticketDetails = toTicketDetailCollection(ticketTree);
+  displayTicketDetails(ticketDetails);
 
   cout << "\nEnter the ticket code: ";
   getline(cin, ticketCode);
@@ -127,6 +131,11 @@ void createOrder(User *user, const Ticket *ticketTree)
        getCurrentDateTime(),
        user->username,
        {ticket->code, ticket->name, ticket->price}});
+
+  if (result)
+  {
+    updateTicketStock(ticketTree, ticket->code, ticket->stock - amount);
+  }
 
   cout << (result ? "\nOrder successfully added to the queue." : "\nOrder queue is full, please try again in a few moment.") << "\n";
 }

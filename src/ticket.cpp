@@ -25,19 +25,15 @@ void randomizeTickets(Ticket *root, int depth, int maxDepth)
     return;
   }
 
-  root->left = makeTicket({
-      generateCode(3),
-      randomItem({"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"}),
-      rand() % 501 + 100,
-  });
+  root->left = makeTicket({generateCode(3),
+                           randomItem({"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"}),
+                           rand() % 501 + 100, rand() % 10 + 1});
 
   randomizeTickets(root->left, depth + 1, maxDepth);
 
-  root->right = makeTicket({
-      generateCode(3),
-      randomItem({"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"}),
-      rand() % 501 + 100,
-  });
+  root->right = makeTicket({generateCode(3),
+                            randomItem({"Adventure Pass", "DreamScape Ticket", "ABC Voucher", "NFL Ticket", "Excursion Token"}),
+                            rand() % 501 + 100, rand() % 10 + 1});
 
   randomizeTickets(root->right, depth + 1, maxDepth);
 }
@@ -47,6 +43,7 @@ Ticket *generateTicket()
   Ticket *root = makeTicket({
       "",
       "",
+      0,
       0,
   });
 
@@ -115,6 +112,13 @@ TicketDetail *findTicketDetailByCode(const Ticket *node, const string &code)
   return nullptr;
 }
 
+vector<TicketDetail> toTicketDetailCollection(const Ticket *ticketTree)
+{
+  vector<TicketDetail> ticketDetails;
+  preOrderTraversal(ticketTree, ticketDetails);
+  return ticketDetails;
+}
+
 void displayTicketDetails(vector<TicketDetail> ticketDetails)
 {
   TextTable t('-', '|', '+');
@@ -122,6 +126,7 @@ void displayTicketDetails(vector<TicketDetail> ticketDetails)
   t.add("Code");
   t.add("Name");
   t.add("Price");
+  t.add("Stock");
   t.endOfRow();
 
   for (const auto &ticketDetail : ticketDetails)
@@ -129,9 +134,31 @@ void displayTicketDetails(vector<TicketDetail> ticketDetails)
     t.add(ticketDetail.code);
     t.add(ticketDetail.name);
     t.add(to_string(ticketDetail.price));
+    t.add(to_string(ticketDetail.stock));
     t.endOfRow();
   }
 
   t.setAlignment(2, TextTable::Alignment::RIGHT);
   cout << t;
+}
+
+bool updateTicketStock(Ticket *node, const string &code, int newStock)
+{
+  if (node == nullptr)
+  {
+    return false;
+  }
+
+  if (node->detail.code == code)
+  {
+    node->detail.stock = newStock;
+    return true;
+  }
+
+  if (updateTicketStock(node->left, code, newStock) || updateTicketStock(node->right, code, newStock))
+  {
+    return true;
+  }
+
+  return false;
 }

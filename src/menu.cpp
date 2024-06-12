@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void adminMenu(User *user, const Ticket *ticketTree)
+void adminMenu(User *user, Ticket *ticketTree)
 {
   int choice;
 
@@ -104,6 +104,10 @@ void adminMenu(User *user, const Ticket *ticketTree)
     case 4:
     {
       clearScreen();
+
+      auto orders = getPendingOrders();
+      displayOrders(orders);
+
       processPendingOrder();
       break;
     }
@@ -119,7 +123,7 @@ void adminMenu(User *user, const Ticket *ticketTree)
   } while (choice != 5);
 }
 
-void userMenu(User *user, const Ticket *ticketTree)
+void userMenu(User *user, Ticket *ticketTree)
 {
   int choice;
 
@@ -150,8 +154,7 @@ void userMenu(User *user, const Ticket *ticketTree)
       clearScreen();
 
       TextTable t('-', '|', '+');
-      vector<TicketDetail> ticketDetails;
-      preOrderTraversal(ticketTree, ticketDetails);
+      vector<TicketDetail> ticketDetails = toTicketDetailCollection(ticketTree);
 
       cout << "\nAvailable Tickets: \n\n";
 
@@ -201,7 +204,7 @@ void userMenu(User *user, const Ticket *ticketTree)
   } while (choice != 4);
 }
 
-void authMenu(const Ticket *ticketTree)
+void authMenu(Ticket *ticketTree)
 {
   int choice;
 

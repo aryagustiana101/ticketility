@@ -18,6 +18,7 @@ struct TicketDetail
   string code;
   string name;
   int price;
+  int stock;
 };
 
 struct Ticket

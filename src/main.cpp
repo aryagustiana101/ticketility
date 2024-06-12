@@ -10,6 +10,8 @@ using namespace std;
 
 int main()
 {
+  clearScreen();
+
   srand(time(0));
 
   Ticket *ticket = generateTicket();
