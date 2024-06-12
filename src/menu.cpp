@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include "headers/data.h"
+#include "headers/user.h"
 #include "headers/auth.h"
 #include "headers/order.h"
 #include "headers/utils.h"
@@ -134,8 +135,10 @@ void userMenu(User *user, Ticket *ticketTree)
     cout << "\nUser Menu:\n";
     cout << "1. Display Available Tickets\n";
     cout << "2. Display My Orders\n";
-    cout << "3. Create Order\n";
-    cout << "4. Logout\n";
+    cout << "3. Display My Balance\n";
+    cout << "4. Create Order\n";
+    cout << "5. Recharge Balance\n";
+    cout << "6. Logout\n";
     cout << "\nEnter your choice: ";
     getline(cin, _choice);
 
@@ -174,7 +177,7 @@ void userMenu(User *user, Ticket *ticketTree)
 
       cout << "\nYour Orders: \n";
 
-      if (orders.size() == 0)
+      if (userOrders.size() == 0)
       {
         cout << "Order not found.\n";
       }
@@ -189,19 +192,32 @@ void userMenu(User *user, Ticket *ticketTree)
     case 3:
     {
       clearScreen();
-      createOrder(user, ticketTree);
+      cout << "\n"
+           << user->username << " balance: " << to_string(user->balance) << "\n";
       break;
     }
     case 4:
+    {
+      clearScreen();
+      createOrder(user, ticketTree);
+      break;
+    }
+    case 5:
+    {
+      clearScreen();
+      rechargeBalance(user);
+      break;
+    }
+    case 6:
     {
       clearScreen();
       cout << "\nLogout successful.\n";
       break;
     }
     default:
-      cout << "\nInvalid choice. Please enter a number from 1 to 4.\n";
+      cout << "\nInvalid choice. Please enter a number from 1 to 6.\n";
     }
-  } while (choice != 4);
+  } while (choice != 6);
 }
 
 void authMenu(Ticket *ticketTree)

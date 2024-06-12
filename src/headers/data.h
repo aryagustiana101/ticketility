@@ -11,6 +11,7 @@ struct User
   string username;
   string role;
   string password;
+  int balance;
 };
 
 struct TicketDetail

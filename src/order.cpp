@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include "headers/data.h"
+#include "headers/user.h"
 #include "headers/utils.h"
 #include "headers/ticket.h"
 #include "headers/storage.h"
@@ -124,6 +125,39 @@ void createOrder(User *user, Ticket *ticketTree)
     return;
   }
 
+  int total = (amount * ticket->price);
+
+  if (user->balance - total <= 0)
+  {
+    cout << "\nUser balance insufficient\n";
+    return;
+  }
+
+  if (ticket == nullptr)
+  {
+    cout << "\nTicket with code " << ticketCode << " not found.\n";
+    return;
+  }
+
+  if (ticket->stock - amount < 0)
+  {
+    cout << "\nTicket stock insufficient\n";
+    return;
+  }
+
+  string confirmation;
+
+  cout << "\n\nAre you sure you want to create this order? (y/n): ";
+  getline(cin, confirmation);
+
+  bool confirmed = confirmation == "y" || confirmation == "Y";
+
+  if (!confirmed)
+  {
+    cout << "\nOperation cancelled.\n";
+    return;
+  }
+
   bool result = addOrderQueue(
       {generateCode(3),
        "pending",
@@ -135,6 +169,20 @@ void createOrder(User *user, Ticket *ticketTree)
   if (result)
   {
     updateTicketStock(ticketTree, ticket->code, ticket->stock - amount);
+
+    auto users = getUsers();
+
+    for (auto &singleUser : users)
+    {
+      if (singleUser.username == user->username)
+      {
+        int newBalance = singleUser.balance - total;
+        singleUser.balance = newBalance;
+        user->balance = newBalance;
+      }
+    }
+
+    saveUsers(users);
   }
 
   cout << (result ? "\nOrder successfully added to the queue." : "\nOrder queue is full, please try again in a few moment.") << "\n";

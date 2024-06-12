@@ -6,5 +6,6 @@
 
 vector<User> getUsers();
 void saveUsers(const vector<User> &users);
+void rechargeBalance(User *_user);
 
 #endif
