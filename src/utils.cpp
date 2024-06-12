@@ -5,8 +5,10 @@
 #include <chrono>
 #include <cstdlib>
 #include <iomanip>
-#include <iostream>
 #include <sstream>
+#include <iostream>
+#include <unistd.h>
+#include <termios.h>
 #include "headers/data.h"
 
 using namespace std;
@@ -58,4 +60,48 @@ string getCurrentDateTime()
 #endif
 
   return ss.str();
+}
+
+void setStdinEcho(bool enable)
+{
+  struct termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  if (!enable)
+    tty.c_lflag &= ~ECHO;
+  else
+    tty.c_lflag |= ECHO;
+
+  (void)tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+string inputPassword()
+{
+  char ch;
+  string password;
+
+  setStdinEcho(false);
+
+  cout << "Enter password: ";
+  while (cin.get(ch) && ch != '\n')
+  {
+    if (ch == 127 || ch == 8)
+    {
+      if (!password.empty())
+      {
+        cout << "\b \b";
+        password.pop_back();
+      }
+    }
+    else
+    {
+      cout << '*';
+      password += ch;
+    }
+  }
+
+  setStdinEcho(true);
+
+  cout << endl;
+
+  return password;
 }

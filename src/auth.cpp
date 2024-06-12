@@ -3,6 +3,7 @@
 #include <iostream>
 #include "headers/user.h"
 #include "headers/data.h"
+#include "headers/utils.h"
 
 using namespace std;
 
@@ -10,12 +11,12 @@ User *login()
 {
   vector<User> users = getUsers();
 
-  string username, password;
+  string username;
 
   cout << "\nEnter username: ";
   getline(cin, username);
-  cout << "Enter password: ";
-  getline(cin, password);
+
+  string password = inputPassword();
 
   for (auto &user : users)
   {
@@ -35,12 +36,12 @@ void registerUser()
 {
   vector<User> users = getUsers();
 
-  string username, password;
+  string username;
 
   cout << "\nEnter new username: ";
   getline(cin, username);
-  cout << "Enter new password: ";
-  getline(cin, password);
+
+  string password = inputPassword();
 
   for (const auto &user : users)
   {
